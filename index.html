@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selina's Way to Success — Job Application Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --sidebar-bg:#F7F6FB;
+    --card-bg:#FFFFFF;
+    --border:#ECEAF3;
+    --border-strong:#DEDAF0;
+    --ink:#201C2E;
+    --ink-soft:#75708C;
+    --muted:#A39EB8;
+    --primary:#8B7FE8;
+    --primary-dark:#6C5CE7;
+    --primary-light:#D6D0F7;
+    --primary-wash:#EDE9FC;
+    --shadow: 0 1px 2px rgba(32,28,46,.04), 0 8px 24px rgba(32,28,46,.06);
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+  a{color:inherit;}
+
+  .app{display:flex;min-height:100vh;}
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:264px;flex:none;background:var(--sidebar-bg);
+    border-right:1px solid var(--border);
+    padding:24px 18px;display:flex;flex-direction:column;gap:22px;
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+  }
+  .brand{display:flex;align-items:center;gap:10px;padding:0 4px;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,var(--primary),#B6ACF7);
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    box-shadow:var(--shadow);
+  }
+  .brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;line-height:1.25;}
+  .brand-sub{font-size:11px;color:var(--muted);margin-top:-2px;}
+
+  nav.tabs{display:flex;flex-direction:column;gap:4px;}
+  .tab-btn{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;border-radius:var(--radius-sm);border:none;background:transparent;
+    color:var(--ink-soft);font-weight:600;font-size:13.5px;text-align:left;width:100%;
+    transition:background .15s, color .15s;
+  }
+  .tab-btn:hover{background:#EFECFA;}
+  .tab-btn.active{background:var(--primary-wash);color:var(--primary-dark);}
+  .tab-btn .ico{font-size:15px;}
+
+  .btn-add{
+    background:var(--primary-dark);color:#fff;border:none;border-radius:var(--radius-sm);
+    padding:11px 14px;font-weight:600;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 4px 14px rgba(108,92,231,.28);
+    transition:transform .12s, box-shadow .12s;
+  }
+  .btn-add:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(108,92,231,.36);}
+
+  .side-card{
+    background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:14px;box-shadow:var(--shadow);
+  }
+  .side-card h4{margin:0 0 10px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);font-family:'Inter';font-weight:700;}
+  .mini-todo{display:flex;flex-direction:column;gap:8px;}
+  .mini-todo-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.35;}
+  .mini-todo-row input[type=checkbox]{margin-top:2px;accent-color:var(--primary-dark);width:15px;height:15px;flex:none;}
+  .mini-todo-row .txt{flex:1;}
+  .mini-todo-row .co{color:var(--muted);font-size:11px;display:block;}
+  .mini-empty{color:var(--muted);font-size:12.5px;}
+
+  .quote-card p{font-size:13px;font-style:italic;color:var(--ink-soft);line-height:1.5;margin:10px 0 0;padding-left:10px;border-left:2px solid var(--primary-light);}
+  .streak-chip{display:inline-flex;align-items:center;gap:6px;background:var(--primary-wash);color:var(--primary-dark);
+    font-weight:700;font-size:12.5px;padding:5px 10px;border-radius:999px;}
+  .confetti-piece{position:fixed;top:-20px;width:9px;height:14px;z-index:200;pointer-events:none;
+    animation:confetti-fall linear forwards;border-radius:2px;}
+  @keyframes confetti-fall{
+    0%{transform:translateY(0) rotate(0deg);opacity:1;}
+    100%{transform:translateY(105vh) rotate(540deg);opacity:.9;}
+  }
+  .quote-shuffle{background:none;border:none;color:var(--primary-dark);font-size:12px;font-weight:700;padding:0;}
+
+  .side-foot{display:flex;gap:10px;margin-top:auto;padding-top:6px;}
+  .side-foot button{background:none;border:none;color:var(--muted);font-size:11.5px;font-weight:600;padding:4px 0;}
+  .side-foot button:hover{color:var(--ink-soft);}
+
+  /* ---------- MAIN ---------- */
+  .main{flex:1;min-width:0;padding:36px 44px 80px;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:14px;}
+  .page-head h1{font-size:28px;margin:0;font-weight:700;}
+  .page-head .sub{color:var(--ink-soft);font-size:13.5px;margin-top:4px;}
+
+  .stat-strip{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .stat-chip{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:14px 18px;min-width:130px;box-shadow:var(--shadow);
+  }
+  .stat-chip .n{font-family:'Space Grotesk';font-size:24px;font-weight:700;}
+  .stat-chip .l{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:2px;}
+
+  .analytics-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:34px;}
+  .analytics-row.single{grid-template-columns:1fr;max-width:560px;}
+  @media (max-width:920px){.analytics-row{grid-template-columns:1fr;}}
+  .analytics-card.wide{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:20px 22px 24px;box-shadow:var(--shadow);
+  }
+
+  .badge-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px;}
+  .badge-chip{
+    display:flex;align-items:center;gap:10px;background:var(--card-bg);border:1px solid var(--border);
+    border-radius:var(--radius-md);padding:10px 14px;box-shadow:var(--shadow);min-width:150px;
+    transition:transform .12s;
+  }
+  .badge-chip.unlocked:hover{transform:translateY(-2px);}
+  .badge-chip .icon{font-size:22px;line-height:1;filter:grayscale(1);opacity:.35;}
+  .badge-chip.unlocked .icon{filter:none;opacity:1;}
+  .badge-chip .label{font-size:12.5px;font-weight:700;color:var(--muted);}
+  .badge-chip.unlocked .label{color:var(--ink);}
+  .badge-chip .sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+  .funnel-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .funnel-label{width:74px;flex:none;font-size:12px;font-weight:700;text-align:right;color:var(--ink-soft);}
+  .funnel-bar-track{flex:1;height:26px;background:#F4F2FB;border-radius:8px;overflow:hidden;position:relative;}
+  .funnel-bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;
+    color:#fff;font-size:11.5px;font-weight:700;min-width:28px;transition:width .3s;}
+  .funnel-conv{width:52px;flex:none;font-size:11px;color:var(--muted);font-weight:700;text-align:left;}
+
+  .time-chart{display:flex;align-items:flex-end;gap:8px;height:140px;padding-top:10px;}
+  .time-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
+  .time-bar{width:100%;max-width:34px;background:linear-gradient(180deg,var(--primary),var(--primary-dark));border-radius:6px 6px 3px 3px;min-height:3px;}
+  .time-bar-count{font-size:11px;font-weight:700;color:var(--ink-soft);}
+  .time-bar-label{font-size:10px;color:var(--muted);white-space:nowrap;}
+  .analytics-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:20px 22px 24px;box-shadow:var(--shadow);
+  }
+  .analytics-card h3{display:flex;align-items:center;gap:8px;font-size:14.5px;margin:0 0 14px;font-weight:700;}
+  .donut-wrap{display:flex;align-items:center;justify-content:center;position:relative;}
+  .donut-center{position:absolute;text-align:center;}
+  .donut-center .big{font-family:'Space Grotesk';font-size:30px;font-weight:700;line-height:1;}
+  .donut-center .lbl{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:2px;}
+  .legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);font-weight:600;}
+  .legend-dot{width:9px;height:9px;border-radius:50%;}
+
+  .section-block{margin-bottom:8px;}
+  .section-head{
+    display:flex;align-items:center;gap:10px;padding:10px 2px;cursor:pointer;user-select:none;
+  }
+  .section-head .chev{transition:transform .15s;color:var(--muted);font-size:11px;}
+  .section-head.collapsed .chev{transform:rotate(-90deg);}
+  .section-pill{
+    display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;
+  }
+  .section-count{color:var(--muted);font-weight:600;font-size:12.5px;}
+  .section-divider{flex:1;height:1px;background:var(--border);}
+  .card-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;
+    padding:6px 2px 22px;
+  }
+  .app-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:14px 15px;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s,box-shadow .12s;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .app-card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(32,28,46,.06),0 14px 28px rgba(32,28,46,.09);}
+  .app-card .co{font-weight:700;font-size:14.5px;}
+  .app-card .role{font-size:12.5px;color:var(--ink-soft);margin-top:-4px;}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;width:fit-content;}
+  .pill-dot{width:6px;height:6px;border-radius:50%;}
+  .app-card .date{font-size:11.5px;color:var(--muted);}
+  .app-card .url{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .app-card .todo-badge{font-size:11px;color:var(--primary-dark);font-weight:700;}
+  .open-site-btn{
+    display:inline-flex;align-items:center;gap:5px;background:var(--primary-wash);color:var(--primary-dark);
+    border:none;border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;width:fit-content;
+    text-decoration:none;
+  }
+  .open-site-btn:hover{background:var(--primary-light);}
+  .field-inline-btn{display:flex;gap:8px;align-items:center;}
+  .field-inline-btn input{flex:1;}
+  .open-site-btn-modal{
+    flex:none;border:1px solid var(--border-strong);background:#fff;border-radius:var(--radius-sm);
+    padding:9px 12px;font-size:12.5px;font-weight:700;color:var(--primary-dark);white-space:nowrap;
+  }
+
+  .empty-state{
+    border:1.5px dashed var(--border-strong);border-radius:var(--radius-lg);
+    padding:36px 20px;text-align:center;color:var(--ink-soft);font-size:13.5px;margin:10px 0 26px;
+  }
+  .empty-state .big-emoji{font-size:26px;display:block;margin-bottom:8px;}
+
+  /* Applications table view */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .toolbar input, .toolbar select{
+    border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;background:#fff;
+  }
+  .toolbar input{flex:1;min-width:180px;}
+  table.apps-table{width:100%;border-collapse:collapse;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+  table.apps-table th{
+    text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);
+    padding:12px 14px;border-bottom:1px solid var(--border);background:#FBFAFD;font-weight:700;
+  }
+  table.apps-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:middle;}
+  table.apps-table tr:last-child td{border-bottom:none;}
+  table.apps-table tr:hover td{background:#FBFAFD;}
+  table.apps-table td.co-cell{font-weight:600;}
+  .row-actions{display:flex;gap:6px;}
+  .icon-btn{
+    border:1px solid var(--border-strong);background:#fff;border-radius:8px;padding:5px 8px;font-size:12px;color:var(--ink-soft);
+  }
+  .icon-btn:hover{background:#F5F3FC;}
+
+  /* To-Dos view */
+  .todo-add-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;background:var(--card-bg);
+    border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow);}
+  .todo-add-row input[type=text]{flex:2;min-width:180px;}
+  .todo-add-row select{flex:1;min-width:160px;}
+  .todo-add-row input, .todo-add-row select{border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;}
+  .todo-group{margin-bottom:20px;}
+  .todo-group-head{font-weight:700;font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .todo-group-head .cnt{color:var(--muted);font-weight:600;font-size:12px;}
+  .todo-list{display:flex;flex-direction:column;gap:6px;}
+  .todo-row{
+    display:flex;align-items:center;gap:10px;background:var(--card-bg);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:10px 12px;box-shadow:var(--shadow);
+  }
+  .todo-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--primary-dark);}
+  .todo-row .t{flex:1;font-size:13.5px;}
+  .todo-row.done .t{text-decoration:line-through;color:var(--muted);}
+  .todo-row .due{font-size:11.5px;color:var(--muted);}
+  .todo-row .del{background:none;border:none;color:var(--muted);font-size:15px;}
+  .todo-row .del:hover{color:#E0574C;}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(32,28,46,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal{
+    background:#fff;border-radius:var(--radius-lg);padding:26px 28px;width:100%;max-width:560px;
+    max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(32,28,46,.25);
+  }
+  .modal h2{margin:0 0 18px;font-size:19px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:5px;}
+  .field input, .field select, .field textarea{
+    width:100%;border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:9px 12px;font-size:13.5px;
+  }
+  .field textarea{resize:vertical;min-height:60px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;}
+  .btn-primary{background:var(--primary-dark);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 18px;font-weight:700;font-size:13.5px;}
+  .btn-ghost{background:none;border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:10px 16px;font-weight:600;font-size:13.5px;color:var(--ink-soft);}
+  .btn-danger{background:none;border:none;color:#E0574C;font-weight:700;font-size:13px;}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+  [hidden]{display:none !important;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#DEDAF0;border-radius:8px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🎯</div>
+      <div>
+        <div class="brand-name">Selina's Way to Success</div>
+        <div class="brand-sub">Job Application Tracker</div>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="dashboard"><span class="ico">📊</span> Dashboard</button>
+      <button class="tab-btn" data-tab="applications"><span class="ico">📋</span> Applications</button>
+      <button class="tab-btn" data-tab="todos"><span class="ico">✅</span> To-Dos</button>
+    </nav>
+
+    <button class="btn-add" id="openAddBtn">+ Add Application</button>
+
+    <div class="side-card">
+      <h4>Up Next</h4>
+      <div class="mini-todo" id="miniTodoList"></div>
+    </div>
+
+    <div class="side-card quote-card">
+      <h4>🎉 Keep Going</h4>
+      <div class="streak-chip" id="streakChip"></div>
+      <p id="quoteText"></p>
+      <button class="quote-shuffle" id="shuffleQuote">↻ Another one</button>
+    </div>
+
+    <button class="btn-ghost" id="loadDemoBtn" style="width:100%;">✨ Preview with demo data</button>
+
+    <div class="side-foot">
+      <button id="exportBtn">Export backup</button>
+      <button id="resetBtn">Reset data</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ================= DASHBOARD ================= -->
+    <section id="view-dashboard">
+      <div class="page-head">
+        <div>
+          <h1>Selina's Way to Success</h1>
+          <div class="sub" id="headerSub"></div>
+        </div>
+      </div>
+
+      <div class="stat-strip" id="statStrip"></div>
+
+      <div class="badge-row" id="badgeRow"></div>
+
+      <div class="analytics-row">
+        <div class="analytics-card">
+          <h3>🕐 Application Overview</h3>
+          <div class="donut-wrap" id="donutOverview"></div>
+          <div class="legend" id="legendOverview"></div>
+        </div>
+        <div class="analytics-card">
+          <h3>🚰 Pipeline Funnel</h3>
+          <div id="funnelChart"></div>
+        </div>
+      </div>
+
+      <div class="analytics-card wide" style="margin-bottom:34px;">
+        <h3>📈 Applications Over Time</h3>
+        <div id="timeChart"></div>
+      </div>
+
+      <div id="boardSections"></div>
+    </section>
+
+    <!-- ================= APPLICATIONS ================= -->
+    <section id="view-applications" hidden>
+      <div class="page-head">
+        <div>
+          <h1>Applications</h1>
+          <div class="sub">Every role you've applied to, searchable and filterable.</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Search company, role, industry...">
+        <select id="filterStatus"><option value="">All statuses</option></select>
+        <select id="filterIndustry"><option value="">All industries</option></select>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="apps-table">
+          <thead>
+            <tr>
+              <th>Company</th><th>Role</th><th>Industry</th><th>Status</th><th>Date Applied</th><th>Todos</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="appsTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="appsEmpty" hidden>
+        <span class="big-emoji">📭</span>
+        No applications match. Try clearing filters, or add your first one.
+      </div>
+    </section>
+
+    <!-- ================= TODOS ================= -->
+    <section id="view-todos" hidden>
+      <div class="page-head">
+        <div>
+          <h1>To-Dos</h1>
+          <div class="sub">Every to-do is linked to an application — pick one, jot down the task.</div>
+        </div>
+      </div>
+      <div class="todo-add-row">
+        <input type="text" id="newTodoText" placeholder="e.g. Write cover letter, finish OT...">
+        <select id="newTodoApp"></select>
+        <input type="date" id="newTodoDue">
+        <button class="btn-add" id="addTodoBtn" style="padding:9px 16px;">+ Add</button>
+      </div>
+      <div id="todoGroups"></div>
+      <div class="empty-state" id="todosEmpty" hidden>
+        <span class="big-emoji">✅</span>
+        No to-dos yet. Add applications first, then link tasks to them.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Add/Edit Application Modal -->
+<div class="overlay" id="modalOverlay" hidden>
+  <div class="modal">
+    <h2 id="modalTitle">Add Application</h2>
+    <div class="field">
+      <label>Company</label>
+      <input type="text" id="f-company" placeholder="e.g. Goldman Sachs">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Role</label>
+        <input type="text" id="f-role" placeholder="e.g. IBD Summer Analyst">
+      </div>
+      <div class="field">
+        <label>Industry</label>
+        <select id="f-industry"></select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Location</label>
+        <input type="text" id="f-location" placeholder="e.g. New York, NY">
+      </div>
+      <div class="field">
+        <label>Date Applied</label>
+        <input type="date" id="f-date">
+      </div>
+    </div>
+    <div class="field">
+      <label>Job URL</label>
+      <div class="field-inline-btn">
+        <input type="text" id="f-url" placeholder="https://...">
+        <button type="button" class="open-site-btn-modal" id="openUrlModalBtn">🔗 Open</button>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Status</label>
+        <select id="f-status"></select>
+      </div>
+      <div class="field" id="f-furthest-wrap" hidden>
+        <label>Furthest stage reached</label>
+        <select id="f-furthest"></select>
+        <div class="hint">Helps the funnel stay accurate even after a rejection.</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Source</label>
+        <select id="f-source">
+          <option>LinkedIn</option><option>Company Website</option><option>Referral</option>
+          <option>Career Fair</option><option>Handshake</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Salary / Stipend (optional)</label>
+        <input type="text" id="f-salary" placeholder="e.g. 8000/mo">
+      </div>
+    </div>
+    <div class="field">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Recruiter contact, interview format, anything worth remembering..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="deleteAppBtn" hidden>Delete application</button>
+      <div style="display:flex;gap:10px;margin-left:auto;">
+        <button class="btn-ghost" id="cancelModalBtn">Cancel</button>
+        <button class="btn-primary" id="saveAppBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+
+  /* ---------------- DATA MODEL ---------------- */
+  const STATUS_META = {
+    'Saved':     {label:'To Apply',  stage:-1, bg:'#FDEBD3', fg:'#C97A1A'},
+    'Applied':   {label:'Applied',   stage:0,  bg:'#EDE9FC', fg:'#6C5CE7'},
+    'OT':        {label:'OT',        stage:1,  bg:'#E3F1FC', fg:'#2D8FD6'},
+    'VI':        {label:'VI',        stage:2,  bg:'#DFF6F0', fg:'#14A085'},
+    'PI':        {label:'PI',        stage:3,  bg:'#FCE8F1', fg:'#D6337A'},
+    'Superday':  {label:'Superday',  stage:4,  bg:'#FDEEE0', fg:'#E07B2A'},
+    'Offer':     {label:'Offer',     stage:5,  bg:'#E3F9E9', fg:'#1FA35B'},
+    'Ghosted':   {label:'Ghosted',   stage:-2, bg:'#EFEFF2', fg:'#8B879C'},
+    'Withdrawn': {label:'Withdrawn', stage:-2, bg:'#F4EBDD', fg:'#A07B3D'},
+  };
+  const STATUS_ORDER = ['Saved','Applied','OT','VI','PI','Superday','Offer','Ghosted','Withdrawn'];
+  const NEGATIVE_STATUSES = ['Ghosted','Withdrawn'];
+  const FUNNEL_STAGES = ['Applied','OT','VI','PI','Superday','Offer'];
+
+  const INDUSTRY_META = {
+    'Risk':            {bg:'#E3F1FC', fg:'#2D8FD6'},
+    'WM/AM':           {bg:'#EDE9FC', fg:'#6C5CE7'},
+    'Buy Side':        {bg:'#E3F9E9', fg:'#1FA35B'},
+    'CIB':             {bg:'#FCE8F1', fg:'#D6337A'},
+    'Consulting':      {bg:'#FCF6D9', fg:'#C9A227'},
+    'Tech':            {bg:'#DFF6F0', fg:'#14A085'},
+    'Sustainability':  {bg:'#EAF7D9', fg:'#6FA23D'},
+    'Corporate':       {bg:'#F4EBDD', fg:'#A07B3D'},
+  };
+  const INDUSTRY_ORDER = Object.keys(INDUSTRY_META);
+
+  const QUOTES = [
+    "Ghosted again? Iconic. Onto the next one. 👻",
+    "You've survived 100% of your rejections so far. Undefeated.",
+    "One 'no' closer to the 'let's schedule your Superday.'",
+    "The OT can't get you if you don't overthink it. (It can. Do it anyway.)",
+    "Recruiters fear this one simple trick: applying anyway.",
+    "You only need one yes. Statistically, someone owes you one.",
+    "Superday is just a regular day with extra caffeine.",
+    "Your resume has main character energy. Act like it.",
+    "Applied today, employed eventually. That's the whole plan.",
+    "If LinkedIn stalking burned calories, you'd be a marathoner.",
+  ];
+
+  let apps = [];      // {id, company, role, industry, location, url, date, status, furthestStage, source, salary, notes, todos:[{id,text,done,due}]}
+  let editingId = null;
+
+  const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+
+  /* ---------------- STORAGE ---------------- */
+  const STORAGE_KEY = 'selinas-way-to-success-applications';
+  async function loadData(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      apps = raw ? JSON.parse(raw) : [];
+    }catch(e){
+      apps = [];
+    }
+  }
+  async function saveData(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
+    }catch(e){
+      showToast('Save failed — your browser storage may be full or blocked');
+    }
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._h);
+    t._h = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  /* ---------------- HELPERS ---------------- */
+  function effectiveStageIndex(app){
+    const meta = STATUS_META[app.status];
+    if(!meta) return -1;
+    if(meta.stage >= 0) return meta.stage;
+    if(NEGATIVE_STATUSES.includes(app.status)){
+      const idx = FUNNEL_STAGES.indexOf(app.furthestStage || 'Applied');
+      return idx === -1 ? 0 : idx;
+    }
+    return -1; // Saved
+  }
+  function fmtDate(d){
+    if(!d) return '—';
+    const dt = new Date(d + 'T00:00:00');
+    if(isNaN(dt)) return d;
+    return dt.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+  }
+  function pendingTodos(app){ return (app.todos||[]).filter(t=>!t.done); }
+
+  /* ---------------- RENDER: STAT STRIP ---------------- */
+  function renderStats(){
+    const total = apps.length;
+    const activeApplied = apps.filter(a=>a.status!=='Saved').length;
+    const interviews = apps.filter(a=>effectiveStageIndex(a)>=2).length; // VI or beyond
+    const offers = apps.filter(a=>a.status==='Offer').length;
+    const responded = apps.filter(a=>a.status!=='Saved' && effectiveStageIndex(a)>=1).length;
+    const responseRate = activeApplied ? Math.round((responded/activeApplied)*100) : 0;
+
+    const stats = [
+      {n: total, l:'Total Tracked'},
+      {n: activeApplied, l:'Applications Sent'},
+      {n: interviews, l:'Interviews Reached'},
+      {n: offers, l:'Offers'},
+      {n: responseRate+'%', l:'Response Rate'},
+    ];
+    document.getElementById('statStrip').innerHTML = stats.map(s=>
+      `<div class="stat-chip"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`
+    ).join('');
+
+    const greetings = total===0 ? "Add your first application to get started." : `Tracking ${total} application${total!==1?'s':''} across your search.`;
+    document.getElementById('headerSub').textContent = greetings;
+  }
+
+  /* ---------------- DONUT CHART (SVG) ---------------- */
+  function buildDonut(container, segments, total){
+    // segments: [{value, color}]
+    container.innerHTML = '';
+    const size = 190, stroke = 22, r = (size-stroke)/2, c = 2*Math.PI*r;
+    const cx = size/2, cy = size/2;
+    let offset = 0;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('width', size); svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+
+    const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+    bg.setAttribute('fill','none'); bg.setAttribute('stroke','#F1EFF9'); bg.setAttribute('stroke-width',stroke);
+    svg.appendChild(bg);
+
+    if(total > 0){
+      segments.forEach(seg=>{
+        if(seg.value<=0) return;
+        const frac = seg.value/total;
+        const len = frac*c;
+        const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
+        circle.setAttribute('fill','none');
+        circle.setAttribute('stroke', seg.color);
+        circle.setAttribute('stroke-width', stroke);
+        circle.setAttribute('stroke-dasharray', `${len} ${c-len}`);
+        circle.setAttribute('stroke-dashoffset', -offset);
+        circle.setAttribute('transform', `rotate(-90 ${cx} ${cy})`);
+        circle.setAttribute('stroke-linecap', segments.length>1 ? 'butt' : 'round');
+        svg.appendChild(circle);
+        offset += len;
+      });
+    }
+    container.appendChild(svg);
+    const centerDiv = document.createElement('div');
+    centerDiv.className = 'donut-center';
+    centerDiv.innerHTML = `<div class="big">${total}</div><div class="lbl">Total</div>`;
+    container.appendChild(centerDiv);
+  }
+
+  function renderOverviewDonut(){
+    const saved = apps.filter(a=>a.status==='Saved').length;
+    const applied = apps.length - saved;
+    const total = apps.length;
+    buildDonut(document.getElementById('donutOverview'), [
+      {value: applied, color:'#8B7FE8'},
+      {value: saved, color:'#D6D0F7'},
+    ], total);
+    const pct = n => total? Math.round(n/total*1000)/10 : 0;
+    document.getElementById('legendOverview').innerHTML = `
+      <div class="legend-item"><span class="legend-dot" style="background:#8B7FE8"></span>Applied — ${applied} (${pct(applied)}%)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#D6D0F7"></span>To Apply — ${saved} (${pct(saved)}%)</div>
+    `;
+  }
+
+  function renderFunnel(){
+    const container = document.getElementById('funnelChart');
+    const nonSaved = apps.filter(a=>a.status!=='Saved');
+    if(nonSaved.length===0){
+      container.innerHTML = '<div class="mini-empty">Apply to something to see your funnel.</div>';
+      return;
+    }
+    const counts = FUNNEL_STAGES.map(stage=>{
+      const idx = FUNNEL_STAGES.indexOf(stage);
+      return nonSaved.filter(a=>effectiveStageIndex(a)>=idx).length;
+    });
+    const maxCount = counts[0] || 1;
+    container.innerHTML = FUNNEL_STAGES.map((stage,i)=>{
+      const count = counts[i];
+      const widthPct = Math.max((count/maxCount*100), count>0 ? 6 : 0);
+      const conv = i===0 ? '100%' : (counts[i-1]>0 ? Math.round(count/counts[i-1]*100)+'%' : '—');
+      const color = STATUS_META[stage].fg;
+      return `
+        <div class="funnel-row">
+          <div class="funnel-label">${stage}</div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill" style="width:${widthPct}%;background:${color}">${count}</div>
+          </div>
+          <div class="funnel-conv">${conv}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderTimeChart(){
+    const container = document.getElementById('timeChart');
+    const weeks = 8;
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    const buckets = [];
+    for(let i=weeks-1;i>=0;i--){
+      const start = new Date(now.getTime() - i*7*24*60*60*1000);
+      buckets.push({start, count:0});
+    }
+    apps.forEach(a=>{
+      if(a.status==='Saved' || !a.date) return;
+      const d = new Date(a.date+'T00:00:00');
+      if(isNaN(d)) return;
+      for(let i=buckets.length-1;i>=0;i--){
+        if(d >= buckets[i].start){ buckets[i].count++; break; }
+      }
+    });
+    const max = Math.max(...buckets.map(b=>b.count), 1);
+    const total = buckets.reduce((s,b)=>s+b.count,0);
+    if(total===0){
+      container.innerHTML = '<div class="mini-empty">No dated applications yet — add some to see your trend.</div>';
+      return;
+    }
+    container.innerHTML = `<div class="time-chart">${buckets.map(b=>{
+      const h = Math.max((b.count/max*100), b.count>0?8:2);
+      const lbl = b.start.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+      return `
+        <div class="time-bar-wrap">
+          <div class="time-bar-count">${b.count>0?b.count:''}</div>
+          <div class="time-bar" style="height:${h}%"></div>
+          <div class="time-bar-label">${lbl}</div>
+        </div>
+      `;
+    }).join('')}</div>`;
+  }
+
+  const BADGES = [
+    {key:'ten_apps', icon:'📮', label:'10 Applications Sent', check:()=>apps.filter(a=>a.status!=='Saved').length>=10, sub:()=>`${Math.min(apps.filter(x=>x.status!=='Saved').length,10)}/10`},
+    {key:'twentyfive_apps', icon:'🗂️', label:'25 Applications Sent', check:()=>apps.filter(a=>a.status!=='Saved').length>=25, sub:()=>`${Math.min(apps.filter(x=>x.status!=='Saved').length,25)}/25`},
+    {key:'first_interview', icon:'🎤', label:'First Interview', check:()=>apps.some(a=>effectiveStageIndex(a)>=2), sub:()=>''},
+    {key:'first_superday', icon:'💼', label:'First Superday', check:()=>apps.some(a=>effectiveStageIndex(a)>=4), sub:()=>''},
+    {key:'first_offer', icon:'🏆', label:'First Offer', check:()=>apps.some(a=>a.status==='Offer'), sub:()=>''},
+  ];
+
+  function renderBadges(){
+    const wrap = document.getElementById('badgeRow');
+    wrap.innerHTML = BADGES.map(b=>{
+      const unlocked = b.check();
+      const sub = b.sub ? b.sub() : '';
+      return `
+        <div class="badge-chip ${unlocked?'unlocked':''}">
+          <div class="icon">${b.icon}</div>
+          <div>
+            <div class="label">${b.label}</div>
+            ${sub ? `<div class="sub">${sub}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+
+  /* ---------------- RENDER: BOARD (dashboard grouped sections) ---------------- */
+  const collapsedSections = new Set();
+
+  function renderBoard(){
+    const wrap = document.getElementById('boardSections');
+    wrap.innerHTML = '';
+    if(apps.length===0){
+      wrap.innerHTML = `<div class="empty-state"><span class="big-emoji">🌱</span>Nothing tracked yet. Click "+ Add Application" to start your pipeline.</div>`;
+      return;
+    }
+    STATUS_ORDER.forEach(status=>{
+      const group = apps.filter(a=>a.status===status);
+      if(group.length===0) return;
+      const meta = STATUS_META[status];
+      const collapsed = collapsedSections.has(status);
+
+      const block = document.createElement('div');
+      block.className = 'section-block';
+      block.innerHTML = `
+        <div class="section-head ${collapsed?'collapsed':''}" data-status="${status}">
+          <span class="chev">▼</span>
+          <span class="section-pill" style="background:${meta.bg};color:${meta.fg}">${meta.label}</span>
+          <span class="section-count">${group.length}</span>
+          <span class="section-divider"></span>
+        </div>
+        <div class="card-grid" ${collapsed?'hidden':''}></div>
+      `;
+      const grid = block.querySelector('.card-grid');
+      group.sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(app=>{
+        grid.appendChild(buildAppCard(app));
+      });
+      block.querySelector('.section-head').addEventListener('click', ()=>{
+        if(collapsedSections.has(status)) collapsedSections.delete(status);
+        else collapsedSections.add(status);
+        renderBoard();
+      });
+      wrap.appendChild(block);
+    });
+  }
+
+  function buildAppCard(app){
+    const meta = STATUS_META[app.status] || {bg:'#eee',fg:'#666',label:app.status};
+    const indMeta = INDUSTRY_META[app.industry] || null;
+    const card = document.createElement('div');
+    card.className = 'app-card';
+    const pending = pendingTodos(app).length;
+    card.innerHTML = `
+      <div class="co">${escapeHtml(app.company||'Untitled')}</div>
+      ${app.role ? `<div class="role">${escapeHtml(app.role)}</div>` : ''}
+      <span class="pill" style="background:${meta.bg};color:${meta.fg}"><span class="pill-dot" style="background:${meta.fg}"></span>${meta.label}</span>
+      ${indMeta ? `<span class="pill" style="background:${indMeta.bg};color:${indMeta.fg}">${escapeHtml(app.industry)}</span>` : ''}
+      <div class="date">${fmtDate(app.date)}</div>
+      ${app.url ? `<a href="${escapeHtml(normalizeUrl(app.url))}" target="_blank" rel="noopener" class="open-site-btn">🔗 Open Website</a>` : ''}
+      ${pending>0 ? `<div class="todo-badge">${pending} open to-do${pending!==1?'s':''}</div>` : ''}
+    `;
+    card.addEventListener('click', ()=>openEditModal(app.id));
+    const openBtn = card.querySelector('.open-site-btn');
+    if(openBtn) openBtn.addEventListener('click', e=>e.stopPropagation());
+    return card;
+  }
+
+  function normalizeUrl(url){
+    if(!url) return '';
+    return /^https?:\/\//i.test(url) ? url : 'https://' + url;
+  }
+
+  function escapeHtml(str){
+    return String(str||'').replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  /* ---------------- RENDER: APPLICATIONS TABLE ---------------- */
+  function populateFilterDropdowns(){
+    const statusSel = document.getElementById('filterStatus');
+    const industrySel = document.getElementById('filterIndustry');
+    statusSel.innerHTML = '<option value="">All statuses</option>' + STATUS_ORDER.map(s=>`<option value="${s}">${STATUS_META[s].label}</option>`).join('');
+    industrySel.innerHTML = '<option value="">All industries</option>' + INDUSTRY_ORDER.map(i=>`<option value="${i}">${i}</option>`).join('');
+  }
+
+  function renderTable(){
+    const q = (document.getElementById('searchInput').value||'').toLowerCase();
+    const fStatus = document.getElementById('filterStatus').value;
+    const fIndustry = document.getElementById('filterIndustry').value;
+    const body = document.getElementById('appsTableBody');
+    body.innerHTML = '';
+    let filtered = apps.filter(a=>{
+      if(fStatus && a.status!==fStatus) return false;
+      if(fIndustry && a.industry!==fIndustry) return false;
+      if(q){
+        const hay = [a.company,a.role,a.industry,a.location].join(' ').toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    }).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+    document.getElementById('appsEmpty').hidden = filtered.length>0;
+
+    filtered.forEach(app=>{
+      const meta = STATUS_META[app.status] || {bg:'#eee',fg:'#666',label:app.status};
+      const pending = pendingTodos(app).length;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="co-cell">${escapeHtml(app.company||'—')}</td>
+        <td>${escapeHtml(app.role||'—')}</td>
+        <td>${escapeHtml(app.industry||'—')}</td>
+        <td><span class="pill" style="background:${meta.bg};color:${meta.fg}">${meta.label}</span></td>
+        <td>${fmtDate(app.date)}</td>
+        <td>${pending>0 ? pending+' open' : '—'}</td>
+        <td class="row-actions">
+          ${app.url ? `<a href="${escapeHtml(normalizeUrl(app.url))}" target="_blank" rel="noopener" class="icon-btn">🔗 Open</a>` : ''}
+          <button class="icon-btn" data-edit="${app.id}">Edit</button>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+    body.querySelectorAll('[data-edit]').forEach(btn=>{
+      btn.addEventListener('click', ()=>openEditModal(btn.dataset.edit));
+    });
+  }
+
+  /* ---------------- RENDER: TODOS TAB ---------------- */
+  function renderTodosTab(){
+    const sel = document.getElementById('newTodoApp');
+    sel.innerHTML = apps.length
+      ? apps.map(a=>`<option value="${a.id}">${escapeHtml(a.company||'Untitled')}${a.role?' — '+escapeHtml(a.role):''}</option>`).join('')
+      : '<option value="">Add an application first</option>';
+
+    const wrap = document.getElementById('todoGroups');
+    wrap.innerHTML = '';
+    const withTodos = apps.filter(a=>(a.todos||[]).length>0);
+    document.getElementById('todosEmpty').hidden = withTodos.length>0;
+
+    withTodos.forEach(app=>{
+      const todos = (app.todos||[]).slice().sort((a,b)=>(a.done - b.done) || (a.due||'').localeCompare(b.due||''));
+      const openCount = todos.filter(t=>!t.done).length;
+      const group = document.createElement('div');
+      group.className = 'todo-group';
+      group.innerHTML = `
+        <div class="todo-group-head">${escapeHtml(app.company||'Untitled')}${app.role?' — '+escapeHtml(app.role):''} <span class="cnt">${openCount} open</span></div>
+        <div class="todo-list"></div>
+      `;
+      const list = group.querySelector('.todo-list');
+      todos.forEach(t=>{
+        const row = document.createElement('div');
+        row.className = 'todo-row' + (t.done?' done':'');
+        row.innerHTML = `
+          <input type="checkbox" ${t.done?'checked':''} data-app="${app.id}" data-todo="${t.id}" class="todo-check">
+          <div class="t">${escapeHtml(t.text)}</div>
+          ${t.due?`<div class="due">${fmtDate(t.due)}</div>`:''}
+          <button class="del" data-app="${app.id}" data-todo="${t.id}">✕</button>
+        `;
+        list.appendChild(row);
+      });
+      wrap.appendChild(group);
+    });
+
+    wrap.querySelectorAll('.todo-check').forEach(cb=>{
+      cb.addEventListener('change', async ()=>{
+        toggleTodo(cb.dataset.app, cb.dataset.todo, cb.checked);
+      });
+    });
+    wrap.querySelectorAll('.del').forEach(btn=>{
+      btn.addEventListener('click', ()=>deleteTodo(btn.dataset.app, btn.dataset.todo));
+    });
+  }
+
+  function renderMiniTodo(){
+    const all = [];
+    apps.forEach(a=>(a.todos||[]).forEach(t=>{ if(!t.done) all.push({app:a, todo:t}); }));
+    all.sort((a,b)=>(a.todo.due||'9999').localeCompare(b.todo.due||'9999'));
+    const wrap = document.getElementById('miniTodoList');
+    if(all.length===0){ wrap.innerHTML = '<div class="mini-empty">Nothing pending — nice.</div>'; return; }
+    wrap.innerHTML = all.slice(0,5).map(({app,todo})=>`
+      <label class="mini-todo-row">
+        <input type="checkbox" data-app="${app.id}" data-todo="${todo.id}" class="mini-check">
+        <span class="txt">${escapeHtml(todo.text)}<span class="co">${escapeHtml(app.company||'')}</span></span>
+      </label>
+    `).join('');
+    wrap.querySelectorAll('.mini-check').forEach(cb=>{
+      cb.addEventListener('change', ()=>toggleTodo(cb.dataset.app, cb.dataset.todo, true));
+    });
+  }
+
+  async function toggleTodo(appId, todoId, done){
+    const app = apps.find(a=>a.id===appId);
+    if(!app) return;
+    const t = (app.todos||[]).find(t=>t.id===todoId);
+    if(!t) return;
+    t.done = done;
+    await saveData();
+    renderAll();
+  }
+  async function deleteTodo(appId, todoId){
+    const app = apps.find(a=>a.id===appId);
+    if(!app) return;
+    app.todos = (app.todos||[]).filter(t=>t.id!==todoId);
+    await saveData();
+    renderAll();
+  }
+
+  /* ---------------- MODAL ---------------- */
+  function populateModalDropdowns(){
+    const indSel = document.getElementById('f-industry');
+    indSel.innerHTML = INDUSTRY_ORDER.map(i=>`<option value="${i}">${i}</option>`).join('');
+    const statusSel = document.getElementById('f-status');
+    statusSel.innerHTML = STATUS_ORDER.map(s=>`<option value="${s}">${STATUS_META[s].label}</option>`).join('');
+    const furthestSel = document.getElementById('f-furthest');
+    furthestSel.innerHTML = FUNNEL_STAGES.map(s=>`<option value="${s}">${s}</option>`).join('');
+  }
+
+  function openAddModal(){
+    editingId = null;
+    document.getElementById('modalTitle').textContent = 'Add Application';
+    document.getElementById('deleteAppBtn').hidden = true;
+    ['f-company','f-role','f-location','f-url','f-salary','f-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+    document.getElementById('f-industry').value = 'Risk';
+    document.getElementById('f-status').value = 'Saved';
+    document.getElementById('f-source').value = 'LinkedIn';
+    updateFurthestVisibility();
+    document.getElementById('modalOverlay').hidden = false;
+    document.getElementById('f-company').focus();
+  }
+
+  function openEditModal(id){
+    const app = apps.find(a=>a.id===id);
+    if(!app) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = 'Edit Application';
+    document.getElementById('deleteAppBtn').hidden = false;
+    document.getElementById('f-company').value = app.company||'';
+    document.getElementById('f-role').value = app.role||'';
+    document.getElementById('f-industry').value = app.industry||'Risk';
+    document.getElementById('f-location').value = app.location||'';
+    document.getElementById('f-date').value = app.date||'';
+    document.getElementById('f-url').value = app.url||'';
+    document.getElementById('f-status').value = app.status||'Saved';
+    document.getElementById('f-furthest').value = app.furthestStage||'Applied';
+    document.getElementById('f-source').value = app.source||'LinkedIn';
+    document.getElementById('f-salary').value = app.salary||'';
+    document.getElementById('f-notes').value = app.notes||'';
+    updateFurthestVisibility();
+    document.getElementById('modalOverlay').hidden = false;
+  }
+
+  function closeModal(){
+    document.getElementById('modalOverlay').hidden = true;
+    editingId = null;
+  }
+
+  function updateFurthestVisibility(){
+    const status = document.getElementById('f-status').value;
+    document.getElementById('f-furthest-wrap').hidden = !NEGATIVE_STATUSES.includes(status);
+  }
+
+  async function saveApp(){
+    const company = document.getElementById('f-company').value.trim();
+    if(!company){ showToast('Company name is required'); document.getElementById('f-company').focus(); return; }
+    const data = {
+      company,
+      role: document.getElementById('f-role').value.trim(),
+      industry: document.getElementById('f-industry').value,
+      location: document.getElementById('f-location').value.trim(),
+      date: document.getElementById('f-date').value,
+      url: document.getElementById('f-url').value.trim(),
+      status: document.getElementById('f-status').value,
+      furthestStage: document.getElementById('f-furthest').value,
+      source: document.getElementById('f-source').value,
+      salary: document.getElementById('f-salary').value.trim(),
+      notes: document.getElementById('f-notes').value.trim(),
+    };
+    let previousStatus = null;
+    if(editingId){
+      const app = apps.find(a=>a.id===editingId);
+      previousStatus = app.status;
+      Object.assign(app, data);
+    }else{
+      apps.push(Object.assign({id:uid(), todos:[]}, data));
+    }
+    await saveData();
+    closeModal();
+    renderAll();
+    showToast('Saved');
+    if(data.status==='Offer' && previousStatus!=='Offer'){
+      triggerConfetti();
+      showToast('🎉 Offer! Go celebrate.');
+    }
+  }
+
+  async function deleteApp(){
+    if(!editingId) return;
+    if(!confirm('Delete this application and its to-dos? This cannot be undone.')) return;
+    apps = apps.filter(a=>a.id!==editingId);
+    await saveData();
+    closeModal();
+    renderAll();
+    showToast('Deleted');
+  }
+
+  /* ---------------- TABS ---------------- */
+  function switchTab(tab){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+    document.getElementById('view-dashboard').hidden = tab!=='dashboard';
+    document.getElementById('view-applications').hidden = tab!=='applications';
+    document.getElementById('view-todos').hidden = tab!=='todos';
+  }
+
+  /* ---------------- MASTER RENDER ---------------- */
+  function renderAll(){
+    renderStats();
+    renderOverviewDonut();
+    renderFunnel();
+    renderTimeChart();
+    renderBadges();
+    renderBoard();
+    renderTable();
+    renderTodosTab();
+    renderMiniTodo();
+    renderStreak();
+  }
+
+  function renderStreak(){
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7*24*60*60*1000);
+    const count = apps.filter(a=>{
+      if(a.status==='Saved' || !a.date) return false;
+      const d = new Date(a.date + 'T00:00:00');
+      return !isNaN(d) && d >= sevenDaysAgo && d <= now;
+    }).length;
+    const chip = document.getElementById('streakChip');
+    if(count===0){ chip.innerHTML = '💤 Quiet week so far'; return; }
+    const fireEmoji = count>=5 ? '🔥🔥' : '🔥';
+    chip.innerHTML = `${fireEmoji} ${count} application${count!==1?'s':''} this week`;
+  }
+
+  function triggerConfetti(){
+    const colors = ['#8B7FE8','#6C5CE7','#2D8FD6','#14A085','#D6337A','#E07B2A','#1FA35B','#C97A1A'];
+    const pieceCount = 60;
+    for(let i=0;i<pieceCount;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      const duration = 2.2 + Math.random()*1.6;
+      const delay = Math.random()*0.4;
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = delay + 's';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), (duration+delay)*1000 + 200);
+    }
+  }
+
+  /* ---------------- INIT / EVENTS ---------------- */
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>switchTab(btn.dataset.tab));
+  });
+  document.getElementById('openAddBtn').addEventListener('click', openAddModal);
+  document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+  document.getElementById('saveAppBtn').addEventListener('click', saveApp);
+  document.getElementById('deleteAppBtn').addEventListener('click', deleteApp);
+  document.getElementById('f-status').addEventListener('change', updateFurthestVisibility);
+  document.getElementById('openUrlModalBtn').addEventListener('click', ()=>{
+    const url = document.getElementById('f-url').value.trim();
+    if(!url){ showToast('No URL saved for this application yet'); return; }
+    window.open(normalizeUrl(url), '_blank', 'noopener');
+  });
+  document.getElementById('modalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='modalOverlay') closeModal(); });
+
+  document.getElementById('searchInput').addEventListener('input', renderTable);
+  document.getElementById('filterStatus').addEventListener('change', renderTable);
+  document.getElementById('filterIndustry').addEventListener('change', renderTable);
+
+  document.getElementById('addTodoBtn').addEventListener('click', async ()=>{
+    const text = document.getElementById('newTodoText').value.trim();
+    const appId = document.getElementById('newTodoApp').value;
+    const due = document.getElementById('newTodoDue').value;
+    if(!text){ showToast('Write a task first'); return; }
+    if(!appId){ showToast('Add an application first'); return; }
+    const app = apps.find(a=>a.id===appId);
+    if(!app) return;
+    app.todos = app.todos || [];
+    app.todos.push({id:uid(), text, done:false, due});
+    await saveData();
+    document.getElementById('newTodoText').value='';
+    document.getElementById('newTodoDue').value='';
+    renderAll();
+    showToast('To-do added');
+  });
+
+  function setRandomQuote(){
+    document.getElementById('quoteText').textContent = '"' + QUOTES[Math.floor(Math.random()*QUOTES.length)] + '"';
+  }
+  document.getElementById('shuffleQuote').addEventListener('click', setRandomQuote);
+
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(apps, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'job-tracker-backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('resetBtn').addEventListener('click', async ()=>{
+    if(!confirm('This will permanently delete all tracked applications and to-dos. Continue?')) return;
+    apps = [];
+    await saveData();
+    renderAll();
+    showToast('All data cleared');
+  });
+
+  function daysAgoStr(n){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+  function daysFromNowStr(n){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+
+  const DEMO_TEMPLATE = [
+    {company:'Morgan Stanley', role:'Risk Analyst', industry:'Risk', status:'Superday', daysAgo:3, url:'morganstanley.com/careers',
+      todos:[{text:'Prep case study for Superday', due:1}]},
+    {company:'BlackRock', role:'Portfolio Analyst', industry:'WM/AM', status:'VI', daysAgo:6, url:'blackrock.com/careers',
+      todos:[{text:'Practice behavioral answers', due:2}]},
+    {company:'Point72', role:'Quant Researcher', industry:'Buy Side', status:'OT', daysAgo:9, url:'point72.com/careers'},
+    {company:'Goldman Sachs', role:'IBD Summer Analyst', industry:'CIB', status:'PI', daysAgo:14, url:'goldmansachs.com/careers',
+      todos:[{text:'Follow up with recruiter', due:3}]},
+    {company:'Bain & Company', role:'Associate Consultant', industry:'Consulting', status:'Applied', daysAgo:2, url:'bain.com/careers'},
+    {company:'Stripe', role:'Risk Operations Analyst', industry:'Tech', status:'Applied', daysAgo:5, url:'stripe.com/jobs'},
+    {company:'Generation IM', role:'ESG Research Analyst', industry:'Sustainability', status:'Saved', daysAgo:1, url:'generationim.com/careers'},
+    {company:'Citadel', role:'Trading Analyst', industry:'Buy Side', status:'Ghosted', daysAgo:40, furthestStage:'OT', url:'citadel.com/careers'},
+    {company:'J.P. Morgan', role:'Corporate Banking Analyst', industry:'CIB', status:'Withdrawn', daysAgo:22, furthestStage:'VI', url:'jpmorgan.com/careers'},
+    {company:'Vanguard', role:'Investment Analyst', industry:'WM/AM', status:'Offer', daysAgo:20, url:'vanguard.com/careers'},
+    {company:'McKinsey & Company', role:'Business Analyst', industry:'Consulting', status:'VI', daysAgo:12, url:'mckinsey.com/careers'},
+    {company:'Two Sigma', role:'Data Scientist', industry:'Buy Side', status:'OT', daysAgo:18, url:'twosigma.com/careers'},
+    {company:'Deutsche Bank', role:'Sustainable Finance Analyst', industry:'Sustainability', status:'Applied', daysAgo:25, url:'db.com/careers'},
+    {company:'Amazon', role:'Corporate Development Analyst', industry:'Corporate', status:'Saved', daysAgo:0, url:'amazon.jobs'},
+    {company:'Google', role:'Risk & Compliance Analyst', industry:'Risk', status:'Applied', daysAgo:30, url:'careers.google.com'},
+    {company:'Evercore', role:'M&A Analyst', industry:'CIB', status:'Superday', daysAgo:8, url:'evercore.com/careers',
+      todos:[{text:'Send thank-you note to interviewers', due:1}]},
+    {company:'Meta', role:'Strategic Finance Analyst', industry:'Corporate', status:'Ghosted', daysAgo:45, furthestStage:'Applied', url:'metacareers.com'},
+    {company:'Blackstone', role:'Real Estate Analyst', industry:'Buy Side', status:'PI', daysAgo:16, url:'blackstone.com/careers'},
+  ];
+
+  async function loadDemoData(){
+    if(apps.length>0 && !confirm('This will replace your current data with sample demo data (you can Reset afterward). Continue?')) return;
+    apps = DEMO_TEMPLATE.map(t=>({
+      id: uid(),
+      company: t.company,
+      role: t.role,
+      industry: t.industry,
+      location: '',
+      date: daysAgoStr(t.daysAgo),
+      url: t.url,
+      status: t.status,
+      furthestStage: t.furthestStage || 'Applied',
+      source: 'LinkedIn',
+      salary: '',
+      notes: '',
+      todos: (t.todos||[]).map(td=>({id:uid(), text:td.text, done:false, due:daysFromNowStr(td.due)})),
+    }));
+    await saveData();
+    renderAll();
+    showToast('Demo data loaded — hit "Reset data" anytime to clear it');
+  }
+  document.getElementById('loadDemoBtn').addEventListener('click', loadDemoData);
+
+  async function init(){
+    populateModalDropdowns();
+    populateFilterDropdowns();
+    setRandomQuote();
+    await loadData();
+    renderAll();
+  }
+  init();
+
+})();
+</script>
+</body>
+</html>
